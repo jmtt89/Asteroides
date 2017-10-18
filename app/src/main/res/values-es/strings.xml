@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="config">Configurar</string>
+    <string name="exit">Salir</string>
+    <string name="start">Comenzar</string>
+    <string name="about">Acerda de</string>
+    <string name="main_title">Asteroides</string>
+</resources>
