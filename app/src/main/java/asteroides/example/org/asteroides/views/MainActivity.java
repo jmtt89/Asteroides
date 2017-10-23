@@ -9,6 +9,10 @@ import android.support.v7.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Vector;
@@ -37,6 +41,27 @@ public class MainActivity extends AppCompatActivity {
                 launchAboutUs(v);
             }
         });
+
+        TextView title = findViewById(R.id.main_title);
+        Animation title_anim = AnimationUtils.loadAnimation(this, R.anim.giro_con_zoom);
+        title.startAnimation(title_anim);
+
+        Button start = findViewById(R.id.btn_start);
+        Animation start_anim = AnimationUtils.loadAnimation(this, R.anim.aparecer);
+        start.startAnimation(start_anim);
+
+        Button config = findViewById(R.id.btn_config);
+        Animation config_anim = AnimationUtils.loadAnimation(this, R.anim.desplazamiento_derecha);
+        config.startAnimation(config_anim);
+
+        Button about = findViewById(R.id.btn_about);
+        Animation about_anim = AnimationUtils.loadAnimation(this, R.anim.desplazamiento_izquierda);
+        about.startAnimation(about_anim);
+
+        Button exit = findViewById(R.id.btn_exit);
+        Animation exit_anim = AnimationUtils.loadAnimation(this, R.anim.desplazamineto_fondo);
+        exit.startAnimation(exit_anim);
+
     }
 
     @Override
@@ -51,6 +76,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_settings) {
             launchPreferences(null);
+            return true;
+        }
+
+        if (id == R.id.action_show_preferences){
+            showPreferences(null);
             return true;
         }
 
@@ -78,12 +108,17 @@ public class MainActivity extends AppCompatActivity {
                 pref.getString("maxPlayers", "2"),
                 resources.getString(R.string.connexion_type_title),
                 resources.getStringArray(R.array.connectionTypes)[Integer.parseInt(pref.getString("connexionType", "0"))]
-                );
+        );
 
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     public void launchAboutUs(View view) {
+        if(view != null){
+            Animation title_anim = AnimationUtils.loadAnimation(this, R.anim.giro_con_zoom);
+            view.startAnimation(title_anim);
+        }
+
         Intent intent = new Intent(this, AboutUsActivity.class);
         startActivity(intent);
     }

@@ -21,9 +21,14 @@
         <activity
             android:name=".views.aboutUs.AboutUsActivity"
             android:theme="@style/Theme.AppCompat.Dialog"/>
-        <activity android:name=".views.settings.PreferencesActivity" android:theme="@style/SettingsTheme"/>
+        <activity
+            android:name=".views.settings.PreferencesActivity"
+            android:theme="@style/AppTheme.SettingsTheme"/>
         <activity android:name=".views.scoreList.ScoreListActivity"/>
-        <activity android:name=".views.gameBoard.Game"/>
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".views.gameBoard.Game"
+            android:theme="@style/AppTheme.Fullscreen"/>
     </application>
 
 </manifest>

@@ -54,10 +54,13 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
 
         switch (Math.round((float)Math.random()*3)){
             case 1:
+                holder.icon.setImageResource(R.drawable.asteroide1);
                 break;
             case 2:
+                holder.icon.setImageResource(R.drawable.asteroide2);
                 break;
             default:
+                holder.icon.setImageResource(R.drawable.asteroide3);
                 break;
         }
     }

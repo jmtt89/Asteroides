@@ -10,7 +10,8 @@ import asteroides.example.org.asteroides.models.base.BoundingCircle;
 
 /**
  * Created by jmtt_ on 10/22/2017.
- *
+ * TODO
+ * Interpretacion propia de la clase Grafico
  */
 
 public class Graph {
@@ -24,7 +25,11 @@ public class Graph {
 
     }
 
-    public void dibujaGrafico(Canvas canvas){
+    public void draw(Canvas canvas){
+
+    }
+
+    public void move(long time){
 
     }
 }
