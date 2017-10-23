@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:layout_margin="30dp"
-    tools:context=".MainActivity" >
+    tools:context=".views.MainActivity" >
 
     <TextView
         android:layout_width="match_parent"
@@ -21,12 +21,14 @@
         android:id="@+id/btn_start"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:onClick="showPreferences"
         android:text="@string/start"/>
 
     <Button
         android:id="@+id/btn_config"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:onClick="launchPreferences"
         android:text="@string/config"/>
 
     <Button
@@ -37,9 +39,10 @@
 
     <Button
         android:id="@+id/btn_exit"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="@string/exit"/>
+        android:layout_height="wrap_content"
+        android:onClick="launchLastScores"
+        android:text="@string/lastScores" />
 
 
 </LinearLayout>

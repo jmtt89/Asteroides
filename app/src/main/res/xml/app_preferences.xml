@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".views.settings.PreferencesActivity"
+    android:key="main_preferences">
+    <CheckBoxPreference
+        android:key="hasMusic"
+        android:defaultValue="true"
+        android:summary="@string/has_music_summary"
+        android:title="@string/has_music_title" />
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/tiposGraficos"
+        android:entryValues="@array/tiposGraficosValores"
+        android:key="graphicType"
+        android:summary="@string/graphic_type_summary"
+        android:title="@string/graphic_type_title" />
+    <EditTextPreference
+        android:defaultValue="3"
+        android:inputType="number"
+        android:key="fragments"
+        android:summary="@string/asteroids_fragments_summary"
+        android:title="@string/asteroids_fragments_title" />
+    <PreferenceCategory
+        android:title="@string/multiplayer_section_title">
+        <CheckBoxPreference
+            android:key="hasMultiplayer"
+            android:defaultValue="false"
+            android:title="@string/has_multiplayer_title" />
+
+        <EditTextPreference
+            android:defaultValue="2"
+            android:inputType="number"
+            android:key="maxPlayers"
+            android:title="@string/max_players_title" />
+
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/connectionTypes"
+            android:entryValues="@array/connectionTypesValues"
+            android:key="connexionType"
+            android:title="@string/connexion_type_title" />
+
+    </PreferenceCategory>
+</PreferenceScreen>
+
+

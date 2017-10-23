@@ -1,8 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="config">Configurar</string>
+    <string name="settings">Configuración</string>
     <string name="exit">Salir</string>
     <string name="start">Comenzar</string>
     <string name="about">Acerda de</string>
     <string name="main_title">Asteroides</string>
+    <string name="about_us_text">Este programa ha sido desarrollado como ejemplo en el curso de Android para demostrar cómo se pueden lanzar nuevas actividades desde la actividad principal.</string>
+    <string name="lastScores">Ultimas Puntuaciones</string>
+    <string name="Search">Buscar</string>
+
+    <!-- Seccion de Prefrences -->
+    <string name="has_music_summary">Se reproduce música de fondo</string>
+    <string name="has_music_title">Reproducir música</string>
+    <string name="graphic_type_summary">Se escoge la representación de gráficos</string>
+    <string name="graphic_type_title">Tipo de gráficos</string>
+    <string name="asteroids_fragments_summary">En cuántos trozos se divide un asteroide (%1$d)</string>
+    <string name="asteroids_fragments_title">Número de Fragmentos</string>
+    <string name="multiplayer_section_title">Modo Multijugador</string>
+    <string name="has_multiplayer_title">Activar Multijugador</string>
+    <string name="max_players_title">Maximo de jugadores</string>
+    <string name="connexion_type_title">Tipo de Conexion</string>
+    <string name="fragments_error_in_input_type">Ha de ser un número</string>
+    <string name="on_item_selected">Selección: %1$d - %2$s</string>
+    <string name="fragments_error_in_input_value">El Numero de Fragmentos debe estar entre 0 y 9</string>
+
+
 </resources>

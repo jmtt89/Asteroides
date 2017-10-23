@@ -3,6 +3,24 @@
     <string name="main_title">Asteroids</string>
     <string name="start">Play</string>
     <string name="config">Configure</string>
+    <string name="settings">Settings</string>
     <string name="about">About Us</string>
     <string name="exit">Exit</string>
+    <string name="about_us_text">This program has been developed as an example in the course of Android to demonstrate how you can launch new activities from the main activity.</string>
+    <string name="lastScores">Last Scores</string>
+    <string name="Search">menu_search</string>
+
+    <string name="asteroids_fragments_summary">how many pieces an asteroid is divided (%1$d)</string>
+    <string name="asteroids_fragments_title">Number of Fragments</string>
+    <string name="connexion_type_title">Connexion Type</string>
+    <string name="graphic_type_summary">Choose the graphics representation</string>
+    <string name="graphic_type_title">Graphics Type</string>
+    <string name="has_multiplayer_title">Enable Multiplayer</string>
+    <string name="has_music_summary">play background music</string>
+    <string name="has_music_title">Enable Music</string>
+    <string name="max_players_title">Max number of players</string>
+    <string name="multiplayer_section_title">Multiplayer Mode</string>
+    <string name="fragments_error_in_input_value">The number of fragments must be between 0 and 9</string>
+    <string name="fragments_error_in_input_type">Has to be a number</string>
+    <string name="on_item_selected">Selection: %1$d - %2$s</string>
 </resources>
