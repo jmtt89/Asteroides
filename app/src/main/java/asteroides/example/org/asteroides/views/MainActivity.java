@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,6 +68,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.app_menu, menu);
+        MenuItem mSearchItem = menu.findItem(R.id.menu_search);
+
+        mSearchItem.setOnActionExpandListener( new MenuItem.OnActionExpandListener() {
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // TODO Auto-generated method stub
+                Toast.makeText(MainActivity.this, "onMenuItemActionExpand", Toast.LENGTH_SHORT)
+                        .show();
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // TODO Auto-generated method stub
+                Toast.makeText(MainActivity.this, "onMenuItemActionExpand", Toast.LENGTH_SHORT)
+                        .show();
+                return true;
+
+            }
+        });
         return true;
     }
 

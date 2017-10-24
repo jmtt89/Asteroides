@@ -123,6 +123,9 @@ public class GameView extends View {
         super(context, attrs);
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        numFragmentos = Integer.parseInt(pref.getString("fragments", "3"));
+
         setupGrafico(context, Integer.parseInt(pref.getString("graphicType", "1")));
 
         asteroides = new ArrayList<Grafico>();

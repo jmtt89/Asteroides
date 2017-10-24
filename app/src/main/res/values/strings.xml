@@ -8,7 +8,7 @@
     <string name="exit">Exit</string>
     <string name="about_us_text">This program has been developed as an example in the course of Android to demonstrate how you can launch new activities from the main activity.</string>
     <string name="lastScores">Last Scores</string>
-    <string name="Search">menu_search</string>
+    <string name="menu_search">Search</string>
 
     <string name="asteroids_fragments_summary">how many pieces an asteroid is divided (%1$d)</string>
     <string name="asteroids_fragments_title">Number of Fragments</string>
