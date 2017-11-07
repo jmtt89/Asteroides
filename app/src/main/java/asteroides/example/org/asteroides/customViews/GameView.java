@@ -1,24 +1,41 @@
 package asteroides.example.org.asteroides.customViews;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.VectorDrawable;
 import android.graphics.drawable.shapes.PathShape;
+import android.graphics.drawable.shapes.RectShape;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 import asteroides.example.org.asteroides.R;
 import asteroides.example.org.asteroides.models.base.Grafico;
@@ -28,7 +45,26 @@ import asteroides.example.org.asteroides.models.base.Grafico;
  * Por los momentos esta es la vista que representa el juego
  */
 
-public class GameView extends View {
+public class GameView extends View implements SensorEventListener {
+
+    class ThreadJuego extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                actualizaFisica();
+            }
+        }
+    }
+
+    // //// THREAD Y TIEMPO //////
+    // Thread encargado de procesar el juego
+    private ThreadJuego thread = new ThreadJuego();
+    // Cada cuanto queremos procesar cambios (ms)
+    private static int PERIODO_PROCESO = 50;
+    // Cuando se realizó el último proceso
+    private long ultimoProceso = 0;
+
+
     ////// ASTEROIDES //////
     private List<Grafico> asteroides; // Lista con los Asteroides
     private int numAsteroides = 5; // Número inicial de asteroides
@@ -39,14 +75,37 @@ public class GameView extends View {
     private int giroNave; // Incremento de dirección
     private double aceleracionNave; // aumento de velocidad
     private static final int MAX_VELOCIDAD_NAVE = 20;
+
+    ////// MISIL //////
+    private static int PASO_VELOCIDAD_MISIL = 12;
+    private Hashtable<Grafico, Integer> misiles;
+    //En luegar de utilizar dos vectores diferentes es preferible utilizar un hashmap
+    //private Vector<Grafico> misiles;
+    //private Vector<Integer> tiempoMisiles;
+
     // Incremento estándar de giro y aceleración
     private static final int PASO_GIRO_NAVE = 5;
     private static final float PASO_ACELERACION_NAVE = 0.5f;
 
+    //
+    private Set<String> validInputs;
+
+    //Touch
+    private float mX = 0, mY = 0;
+    private boolean disparo = false;
+
+    //Sensors
+    private boolean hayValorInicial = false;
+    private float valorInicial;
+
+    private boolean hayValorInicialA = false;
+    private float valorInicialA;
+
+
     private Drawable drawableNave, drawableAsteroide, drawableMisil;
 
-    private void setupGrafico(Context context, int type){
-        switch (type){
+    private void setupGrafico(Context context, int type) {
+        switch (type) {
             case 0:
                 setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 setBackgroundColor(Color.BLACK);
@@ -87,7 +146,14 @@ public class GameView extends View {
                 dAsteroide.setIntrinsicWidth(50);
                 dAsteroide.setIntrinsicHeight(50);
                 drawableAsteroide = dAsteroide;
+
                 // Missiles
+                ShapeDrawable dMisil = new ShapeDrawable(new RectShape());
+                dMisil.getPaint().setColor(Color.WHITE);
+                dMisil.getPaint().setStyle(Paint.Style.STROKE);
+                dMisil.setIntrinsicWidth(15);
+                dMisil.setIntrinsicHeight(3);
+                drawableMisil = dMisil;
                 break;
             case 2:
                 setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -107,22 +173,38 @@ public class GameView extends View {
                 setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
                 // SpaceShip
-                drawableNave = context.getResources().getDrawable(R.drawable.nave);
-                ContextCompat.getDrawable(context, R.drawable.nave);
+                drawableNave = ContextCompat.getDrawable(context, R.drawable.nave);
 
                 // Asteroids
-                drawableAsteroide = context.getResources().getDrawable(R.drawable.asteroide1);
-                ContextCompat.getDrawable(context, R.drawable.asteroide1);
+                drawableAsteroide = ContextCompat.getDrawable(context, R.drawable.asteroide1);
 
                 // Missiles
+                ImageView tmp = new ImageView(getContext());
+                tmp.setBackgroundResource(R.drawable.misil_animated);
+                drawableMisil = tmp.getBackground();
+                //drawableMisil = ContextCompat.getDrawable(context, R.drawable.misil_animated);
                 break;
         }
     }
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        validInputs = pref.getStringSet("validInputs", null);
+
+        SensorManager mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        List<Sensor> listSensors = mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
+        if (!listSensors.isEmpty()) {
+            Sensor orientationSensor = listSensors.get(0);
+            mSensorManager.registerListener(this, orientationSensor, SensorManager.SENSOR_DELAY_GAME);
+        }
+
+        listSensors = mSensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+        if (!listSensors.isEmpty()) {
+            Sensor acelerometerSensor = listSensors.get(0);
+            mSensorManager.registerListener(this, acelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
+        }
 
         numFragmentos = Integer.parseInt(pref.getString("fragments", "3"));
 
@@ -139,11 +221,132 @@ public class GameView extends View {
         }
 
         nave = new Grafico(this, drawableNave);
+        misiles = new Hashtable<>();
+        //tiempoMisiles = new Vector<>();
+        //misiles = new Vector<>();
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if(validInputs.contains("2")) {
+            switch (event.sensor.getType()) {
+                case Sensor.TYPE_ORIENTATION:
+                    float valor = event.values[1];
+                    if (!hayValorInicial) {
+                        valorInicial = valor;
+                        hayValorInicial = true;
+                    }
+                    giroNave = (int) (valor - valorInicial) / 3;
+                    break;
+                case Sensor.TYPE_ACCELEROMETER:
+                    float valorA = event.values[2];
+                    if (!hayValorInicialA) {
+                        valorInicialA = valorA;
+                        hayValorInicialA = true;
+                    }
+                    aceleracionNave = (valorA - valorInicialA) / 3;
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int codigoTecla, KeyEvent evento) {
+        super.onKeyDown(codigoTecla, evento);
+        // Procesamos la pulsasion si estamos keyboard esta habilitado
+        boolean procesada = validInputs.contains("0");
+        if(procesada) {
+            switch (codigoTecla) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                    aceleracionNave = +PASO_ACELERACION_NAVE;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                    giroNave = -PASO_GIRO_NAVE;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    giroNave = +PASO_GIRO_NAVE;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_CENTER:
+                case KeyEvent.KEYCODE_ENTER:
+                    activaMisil();
+                    break;
+                default:
+                    // Si estamos aquí, no hay pulsación que nos interese
+                    procesada = false;
+                    break;
+            }
+        }
+        return procesada;
+    }
+
+    @Override
+    public boolean onKeyUp(int codigoTecla, KeyEvent evento) {
+        super.onKeyUp(codigoTecla, evento);
+        // Procesamos la pulsasion si estamos keyboard esta habilitado
+        boolean procesada = validInputs.contains("0");
+        if(procesada) {
+            switch (codigoTecla) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                    aceleracionNave = 0;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    giroNave = 0;
+                    break;
+                default:
+                    // Si estamos aquí, no hay pulsación que nos interese
+                    procesada = false;
+                    break;
+            }
+        }
+        return procesada;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+        if(validInputs.contains("1")) {
+            float x = event.getX();
+            float y = event.getY();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    disparo = true;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    float dx = Math.abs(x - mX);
+                    float dy = Math.abs(y - mY);
+                    if (dy < 6 && dx > 6) {
+                        giroNave = Math.round((x - mX) / 2);
+                        disparo = false;
+                    } else if (dx < 6 && dy > 6) {
+                        aceleracionNave = Math.round(dy / 25);
+                        disparo = false;
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    giroNave = 0;
+                    aceleracionNave = 0;
+                    if (disparo) {
+                        activaMisil();
+                    }
+                    break;
+            }
+            mX = x;
+            mY = y;
+        }
+        return validInputs.contains("1");
     }
 
     @Override
     protected void onSizeChanged(int ancho, int alto, int ancho_anter, int alto_anter) {
         super.onSizeChanged(ancho, alto, ancho_anter, alto_anter);
+        nave.setCenX(ancho / 2);
+        nave.setCenY(alto / 2);
+
         // Una vez que conocemos nuestro ancho y alto.
         for (Grafico asteroide : asteroides) {
             do {
@@ -152,17 +355,115 @@ public class GameView extends View {
             } while (asteroide.distancia(nave) < (ancho + alto) / 5);
         }
 
-
-        nave.setCenX(ancho / 2);
-        nave.setCenY(alto / 2);
+        ultimoProceso = System.currentTimeMillis();
+        thread.start();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        for (Grafico asteroide : asteroides) {
-            asteroide.dibujaGrafico(canvas);
+        synchronized (asteroides) {
+            for (Grafico asteroide : asteroides) {
+                asteroide.dibujaGrafico(canvas);
+            }
         }
+
+        synchronized (misiles) {
+            for (Map.Entry<Grafico, Integer> misil : misiles.entrySet()) {
+                if(misil.getKey().getDrawable() instanceof AnimationDrawable && !((AnimationDrawable) misil.getKey().getDrawable()).isRunning()){
+                    ((AnimationDrawable) misil.getKey().getDrawable()).start();
+                }
+                misil.getKey().dibujaGrafico(canvas);
+            }
+        }
+
         nave.dibujaGrafico(canvas);
     }
+
+    protected void actualizaFisica() {
+        long ahora = System.currentTimeMillis();
+        if (ultimoProceso + PERIODO_PROCESO > ahora) {
+            return;    // Salir si el período de proceso no se ha cumplido.
+        }
+        // Para una ejecución en tiempo real calculamos el factor de movimiento
+        double factorMov = (ahora - ultimoProceso) / PERIODO_PROCESO;
+        ultimoProceso = ahora; // Para la próxima vez
+        // Actualizamos velocidad y dirección de la nave a partir de
+        // giroNave y aceleracionNave (según la entrada del jugador)
+        nave.setAngulo((int) (nave.getAngulo() + giroNave * factorMov));
+        double nIncX = nave.getIncX() + aceleracionNave * Math.cos(Math.toRadians(nave.getAngulo())) * factorMov;
+        double nIncY = nave.getIncY() + aceleracionNave * Math.sin(Math.toRadians(nave.getAngulo())) * factorMov;
+        // Actualizamos si el módulo de la velocidad no excede el máximo
+        if (Math.hypot(nIncX, nIncY) <= MAX_VELOCIDAD_NAVE) {
+            nave.setIncX(nIncX);
+            nave.setIncY(nIncY);
+        }
+        nave.incrementaPos(factorMov); // Actualizamos posición
+
+        for (Grafico asteroide : asteroides) {
+            asteroide.incrementaPos(factorMov);
+        }
+
+        // Actualizamos posición de misil
+
+        synchronized (misiles){
+            List<Grafico> toDelete = new ArrayList<>();
+            for (Map.Entry<Grafico, Integer> misil : misiles.entrySet()) {
+                misil.getKey().incrementaPos(factorMov);
+                int dM = (int) (misil.getValue() - factorMov);
+                if (dM < 0) {
+                    toDelete.add(misil.getKey());
+                } else {
+                    misiles.put(misil.getKey(), dM);
+                    for (int j = 0; j < asteroides.size(); j++)
+                        if (misil.getKey().verificaColision(asteroides.get(j))) {
+                            destruyeAsteroide(j);
+                            toDelete.add(misil.getKey());
+                            break;
+                        }
+                }
+            }
+            for (Grafico index : toDelete) {
+                misiles.remove(index);
+            }
+        }
+    }
+
+    private void destruyeAsteroide(int i) {
+        synchronized (asteroides) {
+            asteroides.remove(i);
+        }
+        this.postInvalidate();
+    }
+
+    private void activaMisil() {
+        final Grafico misil = new Grafico(this, drawableMisil);
+        misil.setCenX(nave.getCenX());
+        misil.setCenY(nave.getCenY());
+        misil.setAngulo(nave.getAngulo());
+        misil.setIncX(Math.cos(Math.toRadians(misil.getAngulo())) * PASO_VELOCIDAD_MISIL);
+        misil.setIncY(Math.sin(Math.toRadians(misil.getAngulo())) * PASO_VELOCIDAD_MISIL);
+        misiles.put(misil, (int) Math.min(this.getWidth() / Math.abs(misil.getIncX()), this.getHeight() / Math.abs(misil.getIncY())) - 2);
+
+        /*
+        drawableMisil.setCallback(new Drawable.Callback() {
+
+            @Override
+            public void unscheduleDrawable(Drawable who, Runnable what) {
+                misil.getView().removeCallbacks(what);
+            }
+
+            @Override
+            public void scheduleDrawable(Drawable who, Runnable what, long when) {
+                misil.getView().postDelayed(what, when - SystemClock.uptimeMillis());
+            }
+
+            @Override
+            public void invalidateDrawable(Drawable who) {
+                misil.getView().postInvalidate();
+            }
+        });
+        */
+    }
+
 }

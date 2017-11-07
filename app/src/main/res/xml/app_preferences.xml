@@ -22,6 +22,13 @@
         android:key="fragments"
         android:summary="@string/asteroids_fragments_summary"
         android:title="@string/asteroids_fragments_title" />
+    <MultiSelectListPreference
+        android:defaultValue="@array/inputTypesValues"
+        android:key="validInputs"
+        android:entries="@array/inputTypes"
+        android:entryValues="@array/inputTypesValues"
+        android:summary="Selecciona los inputs validos para el juego"
+        android:title="Inputs"/>
     <PreferenceCategory
         android:title="@string/multiplayer_section_title">
         <CheckBoxPreference

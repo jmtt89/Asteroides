@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         Animation title_anim = AnimationUtils.loadAnimation(this, R.anim.giro_con_zoom);
         title.startAnimation(title_anim);
 
+        /*
         Button start = findViewById(R.id.btn_start);
         Animation start_anim = AnimationUtils.loadAnimation(this, R.anim.aparecer);
         start.startAnimation(start_anim);
@@ -62,33 +63,12 @@ public class MainActivity extends AppCompatActivity {
         Button exit = findViewById(R.id.btn_exit);
         Animation exit_anim = AnimationUtils.loadAnimation(this, R.anim.desplazamineto_fondo);
         exit.startAnimation(exit_anim);
-
+        */
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.app_menu, menu);
-        MenuItem mSearchItem = menu.findItem(R.id.menu_search);
-
-        mSearchItem.setOnActionExpandListener( new MenuItem.OnActionExpandListener() {
-
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                // TODO Auto-generated method stub
-                Toast.makeText(MainActivity.this, "onMenuItemActionExpand", Toast.LENGTH_SHORT)
-                        .show();
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                // TODO Auto-generated method stub
-                Toast.makeText(MainActivity.this, "onMenuItemActionExpand", Toast.LENGTH_SHORT)
-                        .show();
-                return true;
-
-            }
-        });
         return true;
     }
 
@@ -101,11 +81,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.action_show_preferences){
-            showPreferences(null);
-            return true;
-        }
-
         if (id == R.id.menu_about_us) {
             launchAboutUs(null);
             return true;
@@ -113,33 +88,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showPreferences(View view) {
-        Resources resources = getResources();
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String message = String.format("%s: %b, %s: %s, %s: %s, %s: %b, %s: %s, %s: %s",
-                resources.getString(R.string.has_music_title),
-                pref.getBoolean("hasMusic", true),
-                resources.getString(R.string.graphic_type_title),
-                resources.getStringArray(R.array.tiposGraficos)[Integer.parseInt(pref.getString("graphicType", "1"))],
-                resources.getString(R.string.asteroids_fragments_title),
-                pref.getString("fragments", "3"),
-                resources.getString(R.string.has_multiplayer_title),
-                pref.getBoolean("hasMultiplayer", false),
-                resources.getString(R.string.max_players_title),
-                pref.getString("maxPlayers", "2"),
-                resources.getString(R.string.connexion_type_title),
-                resources.getStringArray(R.array.connectionTypes)[Integer.parseInt(pref.getString("connexionType", "0"))]
-        );
-
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
 
     public void launchAboutUs(View view) {
+        /*
         if(view != null){
             Animation title_anim = AnimationUtils.loadAnimation(this, R.anim.giro_con_zoom);
             view.startAnimation(title_anim);
         }
+        */
 
         Intent intent = new Intent(this, AboutUsActivity.class);
         startActivity(intent);

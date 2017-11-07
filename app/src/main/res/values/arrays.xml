@@ -13,6 +13,16 @@
         <item>3</item>
     </string-array>
 
+    <string-array name="inputTypes">
+        <item>Keyboard</item>
+        <item>TouchScreen</item>
+        <item>Sensors</item>
+    </string-array>
+    <string-array name="inputTypesValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
 
     <string-array name="connectionTypes">

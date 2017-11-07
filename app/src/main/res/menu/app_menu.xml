@@ -5,12 +5,6 @@
     tools:context=".MainActivity">
 
     <item
-        android:id="@+id/action_show_preferences"
-        android:orderInCategory="15"
-        android:title="@string/show_preferences"
-        app:showAsAction="never"/>
-
-    <item
         android:id="@+id/action_settings"
         android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="5"
@@ -22,14 +16,5 @@
         android:orderInCategory="10"
         android:title="@string/about"
         app:showAsAction="ifRoom|withText"/>
-
-    <item
-        android:id="@+id/menu_search"
-        android:icon="@android:drawable/ic_menu_search"
-        android:title="@string/menu_search"
-        android:orderInCategory="115"
-        android:actionViewClass="android.widget.SearchView"
-        app:showAsAction="always|collapseActionView"
-        />
 
 </menu>
