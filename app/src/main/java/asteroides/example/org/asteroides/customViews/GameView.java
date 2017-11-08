@@ -1,5 +1,6 @@
 package asteroides.example.org.asteroides.customViews;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +18,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
@@ -46,12 +51,40 @@ import asteroides.example.org.asteroides.models.base.Grafico;
  */
 
 public class GameView extends View implements SensorEventListener {
+    private boolean musicEnable;
 
-    class ThreadJuego extends Thread {
+    public class ThreadJuego extends Thread {
+        private boolean pausa, corriendo;
+
+        public synchronized void pausar() {
+            pausa = true;
+            notify();
+        }
+
+        public synchronized void reanudar() {
+            pausa = false;
+            notify();
+        }
+
+        public void detener() {
+            corriendo = false;
+            if (pausa) {
+                reanudar();
+            }
+        }
+
         @Override
         public void run() {
-            while (true) {
+            corriendo = true;
+            while (corriendo) {
                 actualizaFisica();
+                synchronized (this) {
+                    while (pausa) {
+                        try {
+                            wait();
+                        } catch (Exception ignored) {}
+                    }
+                }
             }
         }
     }
@@ -86,6 +119,10 @@ public class GameView extends View implements SensorEventListener {
     // Incremento estándar de giro y aceleración
     private static final int PASO_GIRO_NAVE = 5;
     private static final float PASO_ACELERACION_NAVE = 0.5f;
+
+    ////// MULTIMEDIA //////
+    SoundPool soundPool;
+    int idDisparo, idExplosion;
 
     //
     private Set<String> validInputs;
@@ -166,6 +203,7 @@ public class GameView extends View implements SensorEventListener {
                 drawableAsteroide = VectorDrawableCompat.create(getResources(), R.drawable.vector_asteroid_1, null);
 
                 // Missiles
+                drawableMisil = VectorDrawableCompat.create(getResources(), R.drawable.vector_blast, null);
                 break;
             case 1:
             case 3:
@@ -191,21 +229,8 @@ public class GameView extends View implements SensorEventListener {
         super(context, attrs);
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
 
+        musicEnable = pref.getBoolean("hasMusic", true);
         validInputs = pref.getStringSet("validInputs", null);
-
-        SensorManager mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        List<Sensor> listSensors = mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
-        if (!listSensors.isEmpty()) {
-            Sensor orientationSensor = listSensors.get(0);
-            mSensorManager.registerListener(this, orientationSensor, SensorManager.SENSOR_DELAY_GAME);
-        }
-
-        listSensors = mSensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-        if (!listSensors.isEmpty()) {
-            Sensor acelerometerSensor = listSensors.get(0);
-            mSensorManager.registerListener(this, acelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
-        }
-
         numFragmentos = Integer.parseInt(pref.getString("fragments", "3"));
 
         setupGrafico(context, Integer.parseInt(pref.getString("graphicType", "1")));
@@ -224,6 +249,39 @@ public class GameView extends View implements SensorEventListener {
         misiles = new Hashtable<>();
         //tiempoMisiles = new Vector<>();
         //misiles = new Vector<>();
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            AudioAttributes  att = new AudioAttributes.Builder().setLegacyStreamType(AudioManager.STREAM_MUSIC).build();
+            soundPool = new SoundPool.Builder().setMaxStreams(5).setAudioAttributes(att).build();
+        }else{
+            soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        }
+        idDisparo = soundPool.load(context, R.raw.disparo, 1);
+        idExplosion = soundPool.load(context, R.raw.explosion, 1);
+    }
+
+    public ThreadJuego getThread() {
+        return thread;
+    }
+
+    public void activarSensores(Context context) {
+        SensorManager mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        List<Sensor> listSensors = mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
+        if (!listSensors.isEmpty()) {
+            Sensor orientationSensor = listSensors.get(0);
+            mSensorManager.registerListener(this, orientationSensor, SensorManager.SENSOR_DELAY_GAME);
+        }
+
+        listSensors = mSensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+        if (!listSensors.isEmpty()) {
+            Sensor acelerometerSensor = listSensors.get(0);
+            mSensorManager.registerListener(this, acelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
+        }
+    }
+
+    public void desactivarSensores(Context context) {
+        SensorManager mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager.unregisterListener(this);
     }
 
     @Override
@@ -232,23 +290,33 @@ public class GameView extends View implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(validInputs.contains("2")) {
+        if (validInputs.contains("2")) {
             switch (event.sensor.getType()) {
                 case Sensor.TYPE_ORIENTATION:
+                    /*
                     float valor = event.values[1];
                     if (!hayValorInicial) {
                         valorInicial = valor;
                         hayValorInicial = true;
                     }
                     giroNave = (int) (valor - valorInicial) / 3;
+                    */
                     break;
                 case Sensor.TYPE_ACCELEROMETER:
+
+                    float valor = event.values[1];
+                    if (!hayValorInicial) {
+                        valorInicial = valor;
+                        hayValorInicial = true;
+                    }
+                    giroNave = (int) (valor - valorInicial) / 2;
+
                     float valorA = event.values[2];
                     if (!hayValorInicialA) {
                         valorInicialA = valorA;
                         hayValorInicialA = true;
                     }
-                    aceleracionNave = (valorA - valorInicialA) / 3;
+                    aceleracionNave = (valorA - valorInicialA) / 28;
                     break;
             }
         }
@@ -259,7 +327,7 @@ public class GameView extends View implements SensorEventListener {
         super.onKeyDown(codigoTecla, evento);
         // Procesamos la pulsasion si estamos keyboard esta habilitado
         boolean procesada = validInputs.contains("0");
-        if(procesada) {
+        if (procesada) {
             switch (codigoTecla) {
                 case KeyEvent.KEYCODE_DPAD_UP:
                     aceleracionNave = +PASO_ACELERACION_NAVE;
@@ -288,7 +356,7 @@ public class GameView extends View implements SensorEventListener {
         super.onKeyUp(codigoTecla, evento);
         // Procesamos la pulsasion si estamos keyboard esta habilitado
         boolean procesada = validInputs.contains("0");
-        if(procesada) {
+        if (procesada) {
             switch (codigoTecla) {
                 case KeyEvent.KEYCODE_DPAD_UP:
                     aceleracionNave = 0;
@@ -309,14 +377,14 @@ public class GameView extends View implements SensorEventListener {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
-        if(validInputs.contains("1")) {
-            float x = event.getX();
-            float y = event.getY();
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    disparo = true;
-                    break;
-                case MotionEvent.ACTION_MOVE:
+        float x = event.getX();
+        float y = event.getY();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                disparo = true;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (validInputs.contains("1")) {
                     float dx = Math.abs(x - mX);
                     float dy = Math.abs(y - mY);
                     if (dy < 6 && dx > 6) {
@@ -326,19 +394,19 @@ public class GameView extends View implements SensorEventListener {
                         aceleracionNave = Math.round(dy / 25);
                         disparo = false;
                     }
-                    break;
-                case MotionEvent.ACTION_UP:
-                    giroNave = 0;
-                    aceleracionNave = 0;
-                    if (disparo) {
-                        activaMisil();
-                    }
-                    break;
-            }
-            mX = x;
-            mY = y;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                giroNave = 0;
+                aceleracionNave = 0;
+                if (disparo) {
+                    activaMisil();
+                }
+                break;
         }
-        return validInputs.contains("1");
+        mX = x;
+        mY = y;
+        return disparo || validInputs.contains("1");
     }
 
     @Override
@@ -366,11 +434,15 @@ public class GameView extends View implements SensorEventListener {
             for (Grafico asteroide : asteroides) {
                 asteroide.dibujaGrafico(canvas);
             }
+            if(asteroides.size() == 0){
+                Activity activity = (Activity) getContext();
+                activity.finish();
+            }
         }
 
         synchronized (misiles) {
             for (Map.Entry<Grafico, Integer> misil : misiles.entrySet()) {
-                if(misil.getKey().getDrawable() instanceof AnimationDrawable && !((AnimationDrawable) misil.getKey().getDrawable()).isRunning()){
+                if (misil.getKey().getDrawable() instanceof AnimationDrawable && !((AnimationDrawable) misil.getKey().getDrawable()).isRunning()) {
                     ((AnimationDrawable) misil.getKey().getDrawable()).start();
                 }
                 misil.getKey().dibujaGrafico(canvas);
@@ -406,7 +478,7 @@ public class GameView extends View implements SensorEventListener {
 
         // Actualizamos posición de misil
 
-        synchronized (misiles){
+        synchronized (misiles) {
             List<Grafico> toDelete = new ArrayList<>();
             for (Map.Entry<Grafico, Integer> misil : misiles.entrySet()) {
                 misil.getKey().incrementaPos(factorMov);
@@ -430,6 +502,9 @@ public class GameView extends View implements SensorEventListener {
     }
 
     private void destruyeAsteroide(int i) {
+        if(musicEnable){
+            soundPool.play(idExplosion, 1, 1, 8, 0, 1.0f);
+        }
         synchronized (asteroides) {
             asteroides.remove(i);
         }
@@ -444,7 +519,9 @@ public class GameView extends View implements SensorEventListener {
         misil.setIncX(Math.cos(Math.toRadians(misil.getAngulo())) * PASO_VELOCIDAD_MISIL);
         misil.setIncY(Math.sin(Math.toRadians(misil.getAngulo())) * PASO_VELOCIDAD_MISIL);
         misiles.put(misil, (int) Math.min(this.getWidth() / Math.abs(misil.getIncX()), this.getHeight() / Math.abs(misil.getIncY())) - 2);
-
+        if(musicEnable){
+            soundPool.play(idDisparo, 1, 1, 10, 0, 1.0f);
+        }
         /*
         drawableMisil.setCallback(new Drawable.Callback() {
 

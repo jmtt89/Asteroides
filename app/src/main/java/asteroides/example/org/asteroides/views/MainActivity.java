@@ -3,15 +3,22 @@ package asteroides.example.org.asteroides.views;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.autofill.AutofillId;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,14 +34,23 @@ import asteroides.example.org.asteroides.views.aboutUs.AboutUsActivity;
 import asteroides.example.org.asteroides.views.settings.PreferencesActivity;
 
 public class MainActivity extends AppCompatActivity {
-
     public static ScoreDatabase database = new ScoreDatabaseArray();
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("animationReady", true);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         findViewById(R.id.btn_about).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,9 +59,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        TextView title = findViewById(R.id.main_title);
-        Animation title_anim = AnimationUtils.loadAnimation(this, R.anim.giro_con_zoom);
-        title.startAnimation(title_anim);
+        if(savedInstanceState== null || !savedInstanceState.getBoolean("animationReady", false)){
+            TextView title = findViewById(R.id.main_title);
+            Animation title_anim = AnimationUtils.loadAnimation(this, R.anim.giro_con_zoom);
+            title.startAnimation(title_anim);
+        }
+
 
         /*
         Button start = findViewById(R.id.btn_start);
