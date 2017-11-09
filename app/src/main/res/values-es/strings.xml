@@ -24,6 +24,17 @@
     <string name="fragments_error_in_input_type">Ha de ser un número</string>
     <string name="on_item_selected">Selección: %1$d - %2$s</string>
     <string name="fragments_error_in_input_value">El Numero de Fragmentos debe estar entre 0 y 9</string>
+    <string name="btn_accept">Aceptar</string>
+    <string name="lbl_nickname">Escribe AQUI tu nombre</string>
+    <string name="show_preferences">Muestra las Preferencias</string>
+    <string name="txt_loose">Estuviste MUUY Cerca</string>
+    <string name="txt_loose_extraline">Mejor suerte la proxima ;)</string>
+    <string name="txt_score">Tu puntaje por Tiempo es %1$d</string>
+    <string name="txt_won">¡¡¡GANASTE!!!</string>
+    <string name="has_limit_missiles">Solo permite 3 misiles al mismo tiempo</string>
+    <string name="has_limit_missiles_title">Limitar los misiles a 3</string>
+    <string name="txt_no_score_1">No hay Puntuaciones</string>
+    <string name="txt_no_score_2">Termina el Juego y agrega tu puntaje</string>
 
 
 </resources>

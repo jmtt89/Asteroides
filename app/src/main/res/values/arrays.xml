@@ -4,13 +4,13 @@
         <item>vectorial</item>
         <item>bitmap</item>
         <item>vectorDrawable</item>
-        <item>3D</item>
+        <!--<item>3D</item>-->
     </string-array>
     <string-array name="tiposGraficosValores">
         <item>0</item>
         <item>1</item>
         <item>2</item>
-        <item>3</item>
+        <!--<item>3</item>-->
     </string-array>
 
     <string-array name="inputTypes">

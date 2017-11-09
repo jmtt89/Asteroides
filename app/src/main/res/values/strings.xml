@@ -23,5 +23,15 @@
     <string name="fragments_error_in_input_value">The number of fragments must be between 0 and 9</string>
     <string name="fragments_error_in_input_type">Has to be a number</string>
     <string name="on_item_selected">Selection: %1$d - %2$s</string>
+    <string name="has_limit_missiles_title">Limit Missiles to 3</string>
+    <string name="has_limit_missiles">Only allow 3 missiles at the same time</string>
     <string name="show_preferences">Show Preferences</string>
+    <string name="txt_won">You WON!!!</string>
+    <string name="txt_score">Your score by time is %1$d</string>
+    <string name="lbl_nickname">Write HERE your Nickname</string>
+    <string name="btn_accept">Accept</string>
+    <string name="txt_loose">Ohhhh Sooo Close</string>
+    <string name="txt_loose_extraline">Best luck next time :)</string>
+    <string name="txt_no_score_1">No Scores yet</string>
+    <string name="txt_no_score_2">Beat the game and put your score here</string>
 </resources>

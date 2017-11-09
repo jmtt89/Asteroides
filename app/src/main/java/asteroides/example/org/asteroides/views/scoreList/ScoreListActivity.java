@@ -11,8 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.List;
+
 import asteroides.example.org.asteroides.R;
 import asteroides.example.org.asteroides.database.ScoreDatabase;
+import asteroides.example.org.asteroides.database.ScoreDatabasePreferences;
 import asteroides.example.org.asteroides.views.MainActivity;
 
 /**
@@ -37,22 +40,18 @@ public class ScoreListActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
 
         // setup Adapter
-        ScoreDatabase database = MainActivity.database;
-        adapter = new ScoresAdapter(database.listScores(10));
-        adapter.setOnItemClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int pos = list.getChildAdapterPosition(v);
-                String message = getResources().getString(R.string.on_item_selected, pos, MainActivity.database.listScores(10).get(pos));
-                Toast.makeText(ScoreListActivity.this, message, Toast.LENGTH_LONG).show();
-            }
-        });
-
+        ScoreDatabase database = new ScoreDatabasePreferences(getApplicationContext());
+        List<String> mList = database.listScores(10);
+        adapter = new ScoresAdapter(mList);
 
         // setup RecyclerView
         list = findViewById(R.id.scores);
         list.setLayoutManager(layoutManager);
         list.setAdapter(adapter);
+
+        if(mList.size() == 0){
+            findViewById(R.id.noScore).setVisibility(View.VISIBLE);
+        }
 
     }
 

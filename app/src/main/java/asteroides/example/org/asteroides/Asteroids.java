@@ -41,6 +41,7 @@ public class Asteroids extends Application {
         }else{
             mediaPlayer = MediaPlayer.create(this, R.raw.audio);
         }
+        mediaPlayer.setLooping(true);
         if(!mediaPlayer.isPlaying() && PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("hasMusic", true)){
             mediaPlayer.start();
         }

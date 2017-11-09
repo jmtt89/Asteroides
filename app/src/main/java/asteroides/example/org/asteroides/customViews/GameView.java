@@ -1,8 +1,6 @@
 package asteroides.example.org.asteroides.customViews;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,7 +9,6 @@ import android.graphics.Path;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.VectorDrawable;
 import android.graphics.drawable.shapes.PathShape;
 import android.graphics.drawable.shapes.RectShape;
 import android.hardware.Sensor;
@@ -20,30 +17,27 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.os.SystemClock;
-import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import asteroides.example.org.asteroides.R;
 import asteroides.example.org.asteroides.models.base.Grafico;
+import asteroides.example.org.asteroides.views.gameBoard.FinishListener;
+import asteroides.example.org.asteroides.views.gameBoard.MissileListener;
+import asteroides.example.org.asteroides.views.gameBoard.ScoreUpdateListener;
 
 /**
  * Created by jmtt_ on 10/22/2017.
@@ -52,6 +46,21 @@ import asteroides.example.org.asteroides.models.base.Grafico;
 
 public class GameView extends View implements SensorEventListener {
     private boolean musicEnable;
+    private MissileListener missileListener;
+    private ScoreUpdateListener scoreUpdateListener;
+    private FinishListener finishListener;
+
+    public void setMissileListener(MissileListener missileListener) {
+        this.missileListener = missileListener;
+    }
+
+    public void setScoreUpdateListener(ScoreUpdateListener scoreUpdateListener) {
+        this.scoreUpdateListener = scoreUpdateListener;
+    }
+
+    public void setFinishListener(FinishListener finishListener) {
+        this.finishListener = finishListener;
+    }
 
     public class ThreadJuego extends Thread {
         private boolean pausa, corriendo;
@@ -63,6 +72,7 @@ public class GameView extends View implements SensorEventListener {
 
         public synchronized void reanudar() {
             pausa = false;
+            ultimoProceso =  System.currentTimeMillis();
             notify();
         }
 
@@ -126,6 +136,7 @@ public class GameView extends View implements SensorEventListener {
 
     //
     private Set<String> validInputs;
+    private boolean limitMissiles;
 
     //Touch
     private float mX = 0, mY = 0;
@@ -231,6 +242,7 @@ public class GameView extends View implements SensorEventListener {
 
         musicEnable = pref.getBoolean("hasMusic", true);
         validInputs = pref.getStringSet("validInputs", null);
+        limitMissiles = pref.getBoolean("limitMissiles", true);
         numFragmentos = Integer.parseInt(pref.getString("fragments", "3"));
 
         setupGrafico(context, Integer.parseInt(pref.getString("graphicType", "1")));
@@ -340,7 +352,9 @@ public class GameView extends View implements SensorEventListener {
                     break;
                 case KeyEvent.KEYCODE_DPAD_CENTER:
                 case KeyEvent.KEYCODE_ENTER:
-                    activaMisil();
+                    if(!limitMissiles || misiles.size()<3){
+                        activaMisil();
+                    }
                     break;
                 default:
                     // Si estamos aquí, no hay pulsación que nos interese
@@ -400,7 +414,9 @@ public class GameView extends View implements SensorEventListener {
                 giroNave = 0;
                 aceleracionNave = 0;
                 if (disparo) {
-                    activaMisil();
+                    if(!limitMissiles || misiles.size()<3){
+                        activaMisil();
+                    }
                 }
                 break;
         }
@@ -424,7 +440,9 @@ public class GameView extends View implements SensorEventListener {
         }
 
         ultimoProceso = System.currentTimeMillis();
-        thread.start();
+        if(!thread.isAlive()){
+            thread.start();
+        }
     }
 
     @Override
@@ -433,10 +451,6 @@ public class GameView extends View implements SensorEventListener {
         synchronized (asteroides) {
             for (Grafico asteroide : asteroides) {
                 asteroide.dibujaGrafico(canvas);
-            }
-            if(asteroides.size() == 0){
-                Activity activity = (Activity) getContext();
-                activity.finish();
             }
         }
 
@@ -497,6 +511,7 @@ public class GameView extends View implements SensorEventListener {
             }
             for (Grafico index : toDelete) {
                 misiles.remove(index);
+                missileListener.dismissMissile();
             }
         }
     }
@@ -507,6 +522,10 @@ public class GameView extends View implements SensorEventListener {
         }
         synchronized (asteroides) {
             asteroides.remove(i);
+            scoreUpdateListener.scoreUpdate(100);
+            if(asteroides.size() == 0){
+                finishListener.wonMessage();
+            }
         }
         this.postInvalidate();
     }
@@ -519,6 +538,7 @@ public class GameView extends View implements SensorEventListener {
         misil.setIncX(Math.cos(Math.toRadians(misil.getAngulo())) * PASO_VELOCIDAD_MISIL);
         misil.setIncY(Math.sin(Math.toRadians(misil.getAngulo())) * PASO_VELOCIDAD_MISIL);
         misiles.put(misil, (int) Math.min(this.getWidth() / Math.abs(misil.getIncX()), this.getHeight() / Math.abs(misil.getIncY())) - 2);
+        missileListener.fireMissile();
         if(musicEnable){
             soundPool.play(idDisparo, 1, 1, 10, 0, 1.0f);
         }

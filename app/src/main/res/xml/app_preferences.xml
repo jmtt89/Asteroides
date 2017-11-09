@@ -9,6 +9,11 @@
         android:defaultValue="true"
         android:summary="@string/has_music_summary"
         android:title="@string/has_music_title" />
+    <CheckBoxPreference
+        android:key="limitMissiles"
+        android:defaultValue="true"
+        android:summary="@string/has_limit_missiles"
+        android:title="@string/has_limit_missiles_title" />
     <ListPreference
         android:defaultValue="1"
         android:entries="@array/tiposGraficos"
