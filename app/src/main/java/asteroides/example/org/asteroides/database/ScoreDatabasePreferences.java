@@ -10,7 +10,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created by jmtt_ on 11/8/2017.
+ * Como metodo alternativo de lo propuesto el id en el que se guarda cada puntuacion es la cantidad
+ * de millisegundos al momento cuando se genero la puntuacion, de esta manera podemos almacenar
+ * todas las puntuaciones de manera dinamica.
  */
 
 public class ScoreDatabasePreferences implements ScoreDatabase {

@@ -1,5 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string-array name="currencies">
+        <item>EUR</item>
+        <item>AUD</item>
+        <item>BGN</item>
+        <item>BRL</item>
+        <item>CAD</item>
+        <item>CHF</item>
+        <item>CNY</item>
+        <item>CZK</item>
+        <item>DKK</item>
+        <item>GBP</item>
+        <item>HKD</item>
+        <item>HRK</item>
+        <item>HUF</item>
+        <item>IDR</item>
+        <item>ILS</item>
+        <item>INR</item>
+        <item>JPY</item>
+        <item>KRW</item>
+        <item>MXN</item>
+        <item>MYR</item>
+        <item>NOK</item>
+        <item>NZD</item>
+        <item>PHP</item>
+        <item>PLN</item>
+        <item>RON</item>
+        <item>RUB</item>
+        <item>SEK</item>
+        <item>SGD</item>
+        <item>THB</item>
+        <item>TRY</item>
+        <item>USD</item>
+        <item>ZAR</item>
+    </string-array>
+
+
+
     <string-array name="tiposGraficos">
         <item>vectorial</item>
         <item>bitmap</item>
@@ -23,6 +61,47 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+
+    <string-array name="scoreStorage">
+        <item>Arreglo en memoria</item>
+        <item>Preferencias</item>
+        <item>Fichero en memoria interna</item>
+        <item>Fichero en memoria externa (En la raiz del sitio)</item>
+        <item>Fichero en memoria externa (En carpeta de la aplicacion)</item>
+        <item>Fichero en recursos RAW(Solo lectura)</item>
+        <item>Fechero en recursos assets (Solo lectura)</item>
+        <item>Fichero XML con SAX</item>
+        <item>Fichero XML con DOM </item>
+        <item>Fichero JSON con GSON</item>
+        <item>Fichero JSON con ORG.JSON</item>
+        <item>Bases de datos SQL</item>
+        <item>Bases de datos Relacional</item>
+        <item>Provider</item>
+        <item>Socket</item>
+        <item>WebService</item>
+        <item>WebService Asincrono</item>
+    </string-array>
+    <string-array name="scoreStorageValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+    </string-array>
+
 
 
     <string-array name="connectionTypes">

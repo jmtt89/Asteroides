@@ -488,10 +488,15 @@ public class GameView extends View implements SensorEventListener {
 
         for (Grafico asteroide : asteroides) {
             asteroide.incrementaPos(factorMov);
+            //Verificamos si el asteroide impacta la nave
+            if (asteroide.verificaColision(nave)) {
+                finishListener.onGameFinished();
+            }
         }
 
-        // Actualizamos posición de misil
 
+
+        // Actualizamos posición de misil
         synchronized (misiles) {
             List<Grafico> toDelete = new ArrayList<>();
             for (Map.Entry<Grafico, Integer> misil : misiles.entrySet()) {
@@ -522,9 +527,9 @@ public class GameView extends View implements SensorEventListener {
         }
         synchronized (asteroides) {
             asteroides.remove(i);
-            scoreUpdateListener.scoreUpdate(100);
-            if(asteroides.size() == 0){
-                finishListener.wonMessage();
+            scoreUpdateListener.scoreUpdate(1000);
+            if(asteroides.isEmpty()){
+                finishListener.onGameFinished();
             }
         }
         this.postInvalidate();

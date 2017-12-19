@@ -1,54 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    android:orientation="vertical"
-    android:gravity="center"
-    android:layout_margin="30dp"
-    tools:context=".views.MainActivity">
-
-    <TextView
-        android:id="@+id/main_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:gravity="center"
-        android:text="@string/main_title"
-        android:textSize="45sp"
-        android:textColor="@android:color/white"
-        android:typeface="monospace"/>
+        android:layout_margin="30dp"
+        tools:context=".views.MainActivity">
 
-    <Button
-        android:id="@+id/btn_start"
+        <TextView
+            android:id="@+id/main_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="@string/main_title"
+            android:textSize="45sp"
+            android:textColor="@android:color/white"
+            android:typeface="monospace"/>
+
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:onClick="launchGame"
+            android:text="@string/start"
+            android:typeface="monospace"/>
+
+        <Button
+            android:id="@+id/btn_config"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:onClick="launchPreferences"
+            android:text="@string/config"/>
+
+        <Button
+            android:id="@+id/btn_about"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="@string/about"/>
+
+        <Button
+            android:id="@+id/btn_exit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="launchLastScores"
+            android:text="@string/lastScores" />
+
+        <Button
+            android:id="@+id/btn_converter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="launchConverter"
+            android:text="@string/converter" />
+
+
+    </LinearLayout>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/scoreView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:onClick="launchGame"
-        android:text="@string/start"
-        android:typeface="monospace"/>
+        android:visibility="gone"
 
-    <Button
-        android:id="@+id/btn_config"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:onClick="launchPreferences"
-        android:text="@string/config"/>
-
-    <Button
-        android:id="@+id/btn_about"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="@string/about"/>
-
-    <Button
-        android:id="@+id/btn_exit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="launchLastScores"
-        android:text="@string/lastScores" />
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
 
 
-</LinearLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/txt_won"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+            <TextView
+                android:id="@+id/wonMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/txt_score"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+            <EditText
+                android:id="@+id/userNickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:hint="@string/lbl_nickname"
+                android:padding="16dp" />
+
+            <Button
+                android:id="@+id/wonAccept"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="@string/btn_accept" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>

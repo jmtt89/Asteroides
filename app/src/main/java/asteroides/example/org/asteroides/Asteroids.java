@@ -6,12 +6,15 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.support.v7.preference.PreferenceManager;
 
+import asteroides.example.org.asteroides.database.ScoreDatabase;
+
 /**
  * Created by jmtt_ on 11/8/2017.
  *
  */
 
 public class Asteroids extends Application {
+    private ScoreDatabase database;
     private static final int AUDIO_SESSION = 402;
     private MediaPlayer mediaPlayer;
 
@@ -55,6 +58,14 @@ public class Asteroids extends Application {
             mediaPlayer = null;
         }
         super.onTerminate();
+    }
+
+    public void setDatabase(ScoreDatabase database){
+        this.database = database;
+    }
+
+    public ScoreDatabase getDatabase(){
+        return this.database;
     }
 
     public void resetMusic(boolean newValue){

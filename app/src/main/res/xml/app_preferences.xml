@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".views.settings.PreferencesActivity"
     android:key="main_preferences">
+
     <CheckBoxPreference
         android:key="hasMusic"
         android:defaultValue="true"
@@ -21,19 +22,56 @@
         android:key="graphicType"
         android:summary="@string/graphic_type_summary"
         android:title="@string/graphic_type_title" />
-    <!--<EditTextPreference
+
+    <EditTextPreference
         android:defaultValue="3"
         android:inputType="number"
         android:key="fragments"
         android:summary="@string/asteroids_fragments_summary"
-        android:title="@string/asteroids_fragments_title" />-->
+        android:title="@string/asteroids_fragments_title" />
+
     <MultiSelectListPreference
         android:defaultValue="@array/inputTypesValues"
         android:key="validInputs"
         android:entries="@array/inputTypes"
         android:entryValues="@array/inputTypesValues"
-        android:summary="Selecciona los inputs validos para el juego"
-        android:title="Inputs"/>
+        android:summary="@string/input_type_summary"
+        android:title="@string/input_type_title"/>
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/scoreStorage"
+        android:entryValues="@array/scoreStorageValues"
+        android:key="scoreStorage"
+        android:summary="@string/score_storage_summary"
+        android:title="@string/score_storage_title" />
+
+    <ListPreference
+        android:key="externalStorage"
+        android:summary="@string/external_storage_summary"
+        android:title="@string/external_storage_title" />
+
+    <CheckBoxPreference
+        android:key="useDefaultWebservice"
+        android:defaultValue="true"
+        android:summary="@string/external_url_default_summary"
+        android:title="@string/external_url_default_title" />
+
+    <EditTextPreference
+        android:key="customWebservice"
+        android:defaultValue="https://testscores.000webhostapp.com"
+        android:inputType="textUri"
+        android:summary="@string/external_url_summary"
+        android:title="@string/external_url_title"/>
+
+    <!--
+
+Los URL por defecto son
+
+https://testscores.000webhostapp.com/puntuaciones/lista.php
+https://testscores.000webhostapp.com/puntuaciones/nueva.php
+
+    -->
 
     <!--
     <PreferenceCategory

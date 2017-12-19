@@ -7,6 +7,7 @@ import android.util.Log;
 
 /**
  * Created by jmtt_ on 11/8/2017.
+ *
  */
 
 public class LifecycleHandler implements Application.ActivityLifecycleCallbacks {

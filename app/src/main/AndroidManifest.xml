@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="asteroides.example.org.asteroides">
+
+    <!-- El permiso de READ_EXTERNAL_STORAGE no es necesario pero mejor tenerlo explicitamente declarado -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".Asteroids"
@@ -11,24 +15,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".views.MainActivity">
+        <activity android:name=".views.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".views.aboutUs.AboutUsActivity"
-            android:theme="@style/Theme.AppCompat.Dialog"/>
+            android:theme="@style/Theme.AppCompat.Dialog" />
         <activity
             android:name=".views.settings.PreferencesActivity"
-            android:theme="@style/AppTheme.SettingsTheme"/>
-        <activity android:name=".views.scoreList.ScoreListActivity"/>
+            android:theme="@style/AppTheme.SettingsTheme" />
+        <activity android:name=".views.scoreList.ScoreListActivity" />
         <activity
-            android:screenOrientation="landscape"
             android:name=".views.gameBoard.Game"
-            android:theme="@style/AppTheme.Fullscreen"/>
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.Fullscreen" />
+
+        <provider
+            android:name=".utils.ScoresProvider"
+            android:authorities="org.example.puntuacionesprovider"
+            android:exported="true" />
+
+        <activity
+            android:name=".views.converter.ConverterActivity"
+            android:label="@string/title_activity_converter"
+            android:parentActivityName=".views.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="asteroides.example.org.asteroides.views.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

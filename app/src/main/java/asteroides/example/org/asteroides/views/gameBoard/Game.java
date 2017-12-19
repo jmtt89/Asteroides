@@ -1,6 +1,8 @@
 package asteroides.example.org.asteroides.views.gameBoard;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -19,17 +21,16 @@ import android.widget.TextView;
 
 import asteroides.example.org.asteroides.R;
 import asteroides.example.org.asteroides.customViews.GameView;
-import asteroides.example.org.asteroides.database.ScoreDatabase;
-import asteroides.example.org.asteroides.database.ScoreDatabasePreferences;
 
 /**
- * Created by jmtt_ on 10/22/2017.
+ * Algunos cambios con respecto a la actividad, decidi hacer la comunicacion entre el GameView
+ * y el Game mediante una interface que se implemente a nivel del activity, de esta manera podemos
+ * saber cuando el juego terminar para terminar la actividad sin pasar explicitamente la actividad
+ * a la vista.
  */
 
 public class Game extends AppCompatActivity implements MissileListener, ScoreUpdateListener, FinishListener{
     private static final String TAG = "GAME";
-
-    ScoreDatabase database;
 
     private int myScore;
     private long stoppedTime;
@@ -45,20 +46,10 @@ public class Game extends AppCompatActivity implements MissileListener, ScoreUpd
     private ImageView missileC;
     private TextView currentScore;
 
-    private View wonView;
-    private TextView wonMessage;
-    private EditText nickname;
-    private Button wonButton;
-
-    private View looseView;
-    private TextView looseMessage;
-    private Button looseButton;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        database = new ScoreDatabasePreferences(getApplicationContext());
 
         view = findViewById(R.id.gameView);
 
@@ -77,14 +68,6 @@ public class Game extends AppCompatActivity implements MissileListener, ScoreUpd
         missileC = findViewById(R.id.missileC);
         currentScore = findViewById(R.id.currentScore);
 
-        wonView = findViewById(R.id.wonWrapper);
-        wonMessage = findViewById(R.id.wonMessage);
-        nickname = findViewById(R.id.userNickname);
-        wonButton = findViewById(R.id.wonAccept);
-
-        looseView = findViewById(R.id.looseWrapper);
-        looseMessage = findViewById(R.id.looseMessage);
-        looseButton = findViewById(R.id.looseAccept);
     }
 
     @Override
@@ -167,52 +150,13 @@ public class Game extends AppCompatActivity implements MissileListener, ScoreUpd
     }
 
     @Override
-    public void wonMessage() {
-        view.getThread().detener();
-        view.desactivarSensores(getApplicationContext());
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                wonView.setVisibility(View.VISIBLE);
-                elapsedTime = System.currentTimeMillis() - elapsedTime;
-                int seconds = (int) ((elapsedTime-stoppedTime) / 1000);
-                final int finalScore = myScore + myScore/seconds*10;
-                wonMessage.setText(getResources().getString(R.string.txt_score, finalScore));
-                Log.d(TAG, "elapsed:"+ elapsedTime +" stopped: "+stoppedTime +" seconds: "+seconds);
-
-                wonButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String name = nickname.getText().toString();
-                        Log.d(TAG, "nickname: "+nickname.getText());
-                        Log.d(TAG, "SCORE: "+ name + " " + finalScore);
-                        database.storeScore(finalScore, name, System.currentTimeMillis());
-                        finish();
-                    }
-                });
-            }
-        });
-    }
-
-    @Override
-    public void losseMessage() {
-        view.getThread().detener();
-        view.desactivarSensores(getApplicationContext());
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                elapsedTime = System.currentTimeMillis() - elapsedTime;
-                int seconds = (int) ((elapsedTime-stoppedTime) / 1000);
-                int finalScore = myScore + myScore/seconds*10;
-                looseMessage.setText(getResources().getString(R.string.txt_score, finalScore));
-
-                looseButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        finish();
-                    }
-                });
-            }
-        });
+    public void onGameFinished() {
+        Bundle bundle = new Bundle();
+        bundle.putLong("elapsedTime", elapsedTime-stoppedTime);
+        bundle.putInt("score", myScore);
+        Intent intent = new Intent();
+        intent.putExtras(bundle);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     }
 }

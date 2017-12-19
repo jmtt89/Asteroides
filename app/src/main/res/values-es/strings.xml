@@ -25,16 +25,31 @@
     <string name="on_item_selected">Selección: %1$d - %2$s</string>
     <string name="fragments_error_in_input_value">El Numero de Fragmentos debe estar entre 0 y 9</string>
     <string name="btn_accept">Aceptar</string>
-    <string name="lbl_nickname">Escribe AQUI tu nombre</string>
+    <string name="lbl_nickname">Escribe AQUI tu name</string>
     <string name="show_preferences">Muestra las Preferencias</string>
     <string name="txt_loose">Estuviste MUUY Cerca</string>
     <string name="txt_loose_extraline">Mejor suerte la proxima ;)</string>
-    <string name="txt_score">Tu puntaje por Tiempo es %1$d</string>
-    <string name="txt_won">¡¡¡GANASTE!!!</string>
+    <string name="txt_score">Tu puntaje es %1$d</string>
+    <string name="txt_won">¡¡¡Juego terminado!!!</string>
     <string name="has_limit_missiles">Solo permite 3 misiles al mismo tiempo</string>
     <string name="has_limit_missiles_title">Limitar los misiles a 3</string>
     <string name="txt_no_score_1">No hay Puntuaciones</string>
     <string name="txt_no_score_2">Termina el Juego y agrega tu puntaje</string>
+    <string name="score_storage_summary">Selecciona el tipo de almacenamiento para tus puntuaciones</string>
+    <string name="score_storage_title">Almacen de puntuaciones</string>
+    <string name="sd_no_write">No se puede escribir en la memoria externa</string>
+    <string name="sd_no_read">No puedo leer en la memoria externa</string>
+    <string name="external_storage_title">Unidad de almacenamiento externo</string>
+    <string name="external_storage_summary">Seleccionar en cual unidad de almacenamiento externo se guardarán las puntuaciones</string>
+    <string name="no_permission_external_storage">No se consedio permiso para utilizar el almacenamiento externo, se utiliaran las preferencias en su lugar</string>
+    <string name="external_url_summary">Host de servicio web personalizado</string>
+    <string name="external_url_title">Servidor personalizado</string>
+    <string name="input_type_summary">Seleccionar los inputs válidos para el juego</string>
+    <string name="input_type_title">Inputs</string>
+    <string name="external_url_default_summary">Usar el Webservice predeterminado</string>
+    <string name="external_url_default_title">Webservice predeterminado</string>
+    <string name="title_activity_converter">Actividad de Conversor</string>
+    <string name="converter">Conversor</string>
 
 
 </resources>

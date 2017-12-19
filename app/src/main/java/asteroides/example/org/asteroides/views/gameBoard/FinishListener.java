@@ -5,6 +5,5 @@ package asteroides.example.org.asteroides.views.gameBoard;
  */
 
 public interface FinishListener {
-    public void wonMessage();
-    public void losseMessage();
+    public void onGameFinished();
 }

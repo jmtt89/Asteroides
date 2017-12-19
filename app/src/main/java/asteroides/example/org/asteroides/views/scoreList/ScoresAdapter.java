@@ -9,11 +9,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import asteroides.example.org.asteroides.R;
+import asteroides.example.org.asteroides.views.MainActivity;
 
 /**
  * Created by jmtt_ on 10/21/2017.
@@ -54,6 +58,7 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
         String score = scores.get(position);
         holder.title.setText(score);
 
+        /*
         switch (Math.round((float)Math.random()*3)){
             case 1:
                 holder.icon.setImageResource(R.drawable.asteroide1);
@@ -65,14 +70,26 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
                 holder.icon.setImageResource(R.drawable.asteroide3);
                 break;
         }
+        */
+
+        /*
+        MainActivity.lectorImagenes.get("http://mmoviles.upv.es/img/moviles.png",
+                ImageLoader.getImageListener(holder.icon, R.drawable.asteroide1, R.drawable.asteroide3));
+        */
+
+
+        holder.icon.setImageUrl("http://mmoviles.upv.es/img/moviles.png",
+                MainActivity.lectorImagenes);
+        holder.icon.setDefaultImageResId(R.drawable.asteroide1);
+        holder.icon.setErrorImageResId(R.drawable.asteroide3);
     }
 
     public void setOnItemClickListener(View.OnClickListener onClickListener) {
         this.onItemClickListener = onClickListener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        public ImageView icon;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public NetworkImageView icon;
         public TextView title;
         public TextView subtitle;
 
